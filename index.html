@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    
+    <!-- css
+    ================================================== -->
+    <!-- jquery css -->
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+
+    <!-- Bootstrap css -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- my css -->
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
+    
+
+    <title>Inspiration</title>
+    
+</head>
+<body>
+
+<div class="container">
+    <header class="jumbotron masthead span6">
+        <div class="inner">
+            <h1><a href="index.html">MusicTrail...</a></h1>
+            <h3 class="pump-up">Name a band, name a song, and either follow an "Infinite Sample" or visualize an artist's "Influence Network."</h3>
+            <div class="row">
+                <div class="controls">
+                    <div class="input-append">
+                        <div class="ui-widget">
+                          <input id="artist" placeholder="Artist or Band Name" class="input input-large span4 search-query" />
+                          <input id="song" placeholder="Song Title" class="input input-large span4 search-query" />
+                        </div>
+                        <button id="follow-btn" class="btn btn-inverse btn-large span2" data-loading-text="FOLLOWING">Follow</button>
+                        <button id="network-btn" class="btn btn-large span2" data-loading-text="GETTING NETWORK">Visualize</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="footer span6">
+        <p>
+        Rebecca Odim, Massachusetts Institute of Technology 2013 UAP.
+        </p>
+        <p> Used <a target="_blank" href="http://getbootstrap.com">Bootstrap</a>, <a target="_blank" href="http://d3js.org/">D3.js</a>, and <a target="_blank" href="http://www.secondhandsongs.com/wiki/API/Main">SecondHangSongs.</a>
+        </p>
+    </div>
+    
+</div>
+
+
+    <!-- javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <!-- jquery js -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+    <!-- Bootstrap js -->
+    <script src="bootstrap/js/bootstrap.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <!-- my js -->
+    <script src="js/index.js"></script>
+
+
+      <script type="text/javascript">
+        $(document).ready(function() {
+
+			$("#follow-btn").click(function() {
+				if ($("#artist").val() === null || $("#song").val() === null) {
+					alert("Need a song title to follow!");
+				}
+			});
+			$("#network-btn").click(function() {
+				if ($("#artist").val() === null) {
+					alert("Must enter an artist!");
+				}
+			});
+
+			var uri = "";
+			var basicinfoURI = "";
+			var artper = "";
+			var songList;
+		
+	  
+		  	$("#artist").autocomplete({
+				source: function(request, response) {
+					$.ajaxPrefilter(function(options) {
+						if (options.crossDomain && jQuery.support.cors) {
+							options.url = (window.location.protocol === 'http:' ? 'http:' : 'https:') +
+								'//cors-anywhere.herokuapp.com/' + ('secondhandsongs.com/search/artist');
+						}
+					});
+					$.ajax({
+						url: "http://www.secondhandsongs.com/search/artist",
+						data: {commonName: encodeURI($("#artist").val()), format: "json"},
+						dataType: "json",
+						type: "GET",
+						contentType: "application/json; charset=utf-8",
+						//headers: {"Access-Control-Allow-Origin", "*"},
+					  	//dataFilter: function(data) { return data; },
+						success: function(data) {
+							console.log("artist data: ");
+							console.log(data.resultPage);
+							var a = $.map(data.resultPage, function(item) {
+								return {
+									label: item.commonName,
+									value: item.commonName,
+									uri: item.uri
+								}
+							});
+							console.log("mapped data (var a): ");
+							console.log(a);
+							response(a);
+						},
+						error: function(XMLHttpRequest, textStatus, errorThrown) {
+							alert(errorThrown);
+						}
+					});
+			
+				},
+				select: function(event, ui) {
+					nameselect = ui.item.value;
+					artistselect = ui.item.uri;
+					console.log("selected artist: "+artistselect);
+					$("#song").show().focus();
+					$("#network-btn").click(function() {
+						if ($("#artist").val() !== null) {
+							//window.location = "d3_adjacent.html?network="+encodeURI(ui.item.uri);
+							window.location = "d3_adjacent.html?network="+encodeURI(artistselect);
+						} else {
+							alert("Must enter an artist!");
+						}
+				
+					});
+			
+					$.ajaxPrefilter(function(options) {
+						if (options.crossDomain && jQuery.support.cors) {
+							options.url = (window.location.protocol === 'http:' ? 'http:' : 'https:') +
+								'//cors-anywhere.herokuapp.com/' + artistselect;
+						}
+					});
+					$.ajax({
+						url: artistselect,
+						data: {format: "json"},
+						dataType: "json",
+						type: "GET",
+						contentType: "application/json; charset=utf-8",
+						//headers: {"Access-Control-Allow-Origin", "*"},
+						//dataFilter: function(adata) { return adata; },
+
+						success: function(adata) {
+							console.log("performance list: "+adata.performances);
+							artper = adata.performances;
+						},
+						error: function(XMLHttpRequest, textStatus, errorThrown) {
+							alert(errorThrown);
+						}
+					});
+				},       
+				minLength: 0,
+				maxLenght: 5
+			});
+	
+			$("#song").autocomplete({
+				source: function(srequest, sresponse) {
+					//console.log(artper);
+					$.ajaxPrefilter(function(options) {
+						if (options.crossDomain && jQuery.support.cors) {
+							options.url = (window.location.protocol === 'http:' ? 'http:' : 'https:') +
+								'//cors-anywhere.herokuapp.com/' + artper;
+						}
+					});
+					$.ajax({
+						url: artper,
+						data: { format : "json"},
+						dataType: "json",
+						type: "GET",
+						contentType: "application/json; charset=utf-8",
+					  	//dataFilter: function(data) { return data; },
+
+						success: function(sdata) {
+							console.log("song data: ");
+							console.log(sdata);
+							var s = $.map(sdata, function(sitem) {
+								return {
+									label: sitem.title,
+									uri: sitem.uri
+								}
+							});
+							console.log("mapped data (var s): ");
+							console.log(s);
+							sresponse(s);
+						},
+						error: function(XMLHttpRequest, textStatus, errorThrown) {
+							alert(errorThrown);
+						}
+					});
+				},
+				select: function(sevent, sui) {
+					console.log("song:");
+					console.log(sui.item);
+					console.log(sui.item.uri);
+					
+					$("#follow-btn").click(function() {
+						if ($("#artist").val() !== null && $("#song").val() !== null) {
+							window.location = "follow.html?uri="+encodeURI(sui.item.uri);
+						} else {
+							alert("Need a song title to follow!");
+						}
+					});
+
+					$("#network-btn").click(function() {
+						if ($("#artist").val() === null) {
+							alert("Must enter an artist!");
+						}
+					});
+				},
+				minLength: 0,
+				maxLength: 5
+			});
+        });
+        </script>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Bootstrap css -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- jquery css -->
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+
+    <!-- my css -->
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
+    
+    <!-- jquery js -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+    <!-- Bootstrap js -->
+    <script src="bootstrap/js/bootstrap.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+
+
+<script src="http://d3js.org/d3.v2.js?2.9.1"></script>
+<script src="js/make_list.js"></script>
+
+<style>
+
+.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+.node circle {
+  fill: #ccc;
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+
+
+</style>
+<body style="background: none;">
+
+  <div class="container">
+    <a href="d3_adjacent.html" style="float: right;">See All</a>
+    <header class="jumbotron masthead span10">
+        <div class="inner">
+            <h1><a href="index.html">MusicTrail...</a></h1>
+            <h3 class="pump-up">"Influence Network"</h3>
+            
+        </div>
+    </header>
+    <div id="sidebar" class="span2">
+      <div id="picture"></div>
+      <div id="artistName"></div>
+      <div id="basicInfo"></div>
+      <div id="moreInfo"></div>
+      <div id="performanceInfo"></div>
+      <br/>
+
+    </div>
+
+   <div class="footer span6">
+        <p>
+        Rebecca Odim, Massachusetts Institute of Technology 2013 UAP.
+        </p>
+        <p> Used <a target="_blank" href="http://getbootstrap.com">Bootstrap</a>, <a target="_blank" href="http://d3js.org/">D3.js</a>, and <a target="_blank" href="http://www.secondhandsongs.com/wiki/API/Main">SecondHangSongs.</a>
+        </p>
+    </div>
+    
+</div>
+
+
+<script>
+$(document).ready(function() {
+	
+  //gets param values from url
+    $.urlParam = function(name){
+        var results = new RegExp('[\\?&amp;]' + name + '=([^#]*)').exec(window.location.href);
+        //console.log(results);
+        //results[1] = artist uri
+        if (results === null) {
+            return 0 //returns 0 if there is no current song to follow
+        }else{
+            return results[1]
+        }
+    }
+
+    var network = decodeURIComponent($.urlParam('network')); // name
+    
+
+    //selecting song or following song
+    if (network != 0) {
+        //console.log(network)
+        makelist(network);
+    } else {
+        makelist("aba");
+    }
+  
+});
+</script>
+</body>

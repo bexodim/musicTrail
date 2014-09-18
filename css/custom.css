@@ -1,0 +1,73 @@
+
+body {
+    background: url("../images/mixtape.jpg") no-repeat bottom right;
+    min-height: 650px;
+}
+
+.footer {
+    float: right;
+    text-align: right;
+}
+
+#song {
+    display:none;
+}
+
+.content, .header, .footer {
+    margin: auto;
+}
+
+.jumbotron {
+position: relative;
+text-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);
+margin: auto;
+}
+
+.masthead {
+padding-top: 40px;
+margin-bottom: 140px;
+}
+
+.followhead {
+padding-top: 40px;
+}
+
+.row {
+    margin: auto;
+    vertical-align: top;
+}
+
+.ui-widget {
+    padding-top: 10px;
+    height: 80px;
+    margin: auto;
+}
+
+.input-large {
+    width: 210px;
+    height: 20px;
+    margin-bottom: 10px;
+    line-height: 30px;
+    padding: 11px 19px;
+    font-size: 30px;
+}
+
+.ui-autocomplete { height: auto; max-height: 100px; overflow-y: scroll; overflow-x: hidden;}
+
+a {
+    color: red;
+}
+
+#tracking {
+    color: red;
+}
+
+
+#sidebar {
+  /*background-color: #999999;*/
+  height: 100%;
+  width: 250px;
+  position: absolute;
+  right: 0;
+  padding: 40px;
+}
